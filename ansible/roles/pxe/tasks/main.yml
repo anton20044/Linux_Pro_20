@@ -1,0 +1,92 @@
+---
+- name: stop ufw
+  ansible.builtin.service:
+    name: ufw
+    state: stopped
+    enabled: false
+
+- name: update cache
+  apt:
+    update_cache=yes cache_valid_time=3600
+
+- name: install utils
+  ansible.builtin.apt:
+    pkg:
+    - dnsmasq
+    - apache2
+
+- name: copy conf dnsmasq
+  template:
+    src: dnsmasq_conf
+    dest: /etc/dnsmasq.d/pxe.conf
+
+- name: create directory for tftp
+  ansible.builtin.file:
+    path: /srv/tftp
+    state: directory
+    mode: '0755'
+
+- name: create directory for iso
+  ansible.builtin.file:
+    path: /srv/images
+    state: directory
+    mode: '0755'
+
+- name: create directory for autoinstall
+  ansible.builtin.file:
+    path: /srv/ks
+    state: directory
+    mode: '0755'
+
+- name: create file meta-data
+  ansible.builtin.file:
+    path: /srv/ks/meta-data
+    owner: root
+    group: root
+    mode: '0755'
+    state: touch
+
+- name: download netboot image
+  ansible.builtin.shell: wget https://releases.ubuntu.com/noble/ubuntu-24.04.1-netboot-amd64.tar.gz
+
+- name: extract tar
+  ansible.builtin.shell: tar -xzvf ubuntu-24.04.1-netboot-amd64.tar.gz -C /srv/tftp
+
+- name: download ubuntu image
+  ansible.builtin.shell: wget https://releases.ubuntu.com/24.04.1/ubuntu-24.04.1-live-server-amd64.iso -O /srv/images/ubuntu-24.04.1-live-server-amd64.iso
+
+- name: copy conf nginx
+  template:
+    src: nginx_conf
+    dest: /etc/apache2/sites-available/ks-server.conf
+
+- name: activate site
+  ansible.builtin.shell: a2ensite ks-server.conf
+
+- name: copy conf pxe
+  template:
+    src: pxe_conf
+    dest: /srv/tftp/amd64/pxelinux.cfg/default
+
+- name: copy auto conf
+  template:
+    src: ubuntu_conf
+    dest: /srv/ks/user-data
+
+- name: copy uefi conf
+  template:
+    src: uefi_conf
+    dest: /srv/tftp/amd64/grub/grub.cfg
+
+- name: restart apache2
+  ansible.builtin.service:
+    name: apache2
+    state: restarted
+
+- name: restart dnsmasq
+  ansible.builtin.service:
+    name: dnsmasq
+    state: restarted
+
+
+

@@ -1,0 +1,8 @@
+[pxe]
+pxeserver ansible_host=192.168.56.20 ansible_ssh_private_key_file=.vagrant/machines/pxeserver/virtualbox/private_key
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+pxe_interface=enp0s8
+pxe_start_ip_dhcp=192.168.58.100
+pxe_end_ip_dhcp=192.168.58.120
