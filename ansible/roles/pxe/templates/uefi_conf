@@ -1,6 +1,6 @@
 
 menuentry "Install Ubuntu Server" {
         set gfxpayload=keep
-        linux linux iso-url=http://{{ pxe_interface }}/srv/images/ubuntu-24.04.1-live-server-amd64.iso ip=dhcp ---
+        linux linux iso-url=http://{{ pxe_ip }}/srv/images/ubuntu-24.04.1-live-server-amd64.iso ip=dhcp ---
         initrd  initrd
 }

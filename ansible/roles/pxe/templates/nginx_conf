@@ -1,4 +1,4 @@
-<VirtualHost {{ pxe_interface }}:80>
+<VirtualHost {{ pxe_ip }}:80>
 DocumentRoot /
 <Directory /srv/ks>
 Options Indexes MultiViews

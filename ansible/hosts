@@ -6,3 +6,4 @@ ansible_python_interpreter=/usr/bin/python3
 pxe_interface=enp0s8
 pxe_start_ip_dhcp=192.168.58.100
 pxe_end_ip_dhcp=192.168.58.120
+pxe_ip=192.168.58.10
